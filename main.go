@@ -9,6 +9,11 @@ import (
 	"fmt"
 	"os"
 )
+type CommandControl struct {
+	Status     string
+	ReturnCode string
+	Command    string
+}
 
 //----------------------------------------------------------------
 func main() {
