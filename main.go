@@ -94,13 +94,13 @@ func InitPage() string {
 	xdata = xdata + "<html>"
 	xdata = xdata + "<head>"
 	//------------------------------------------------------------------------
-	xdata = xdata + "<title>Go Web Server Start Page</title>"
+	xdata = xdata + "<title>EDI Tool -  (c) Copyright Com1Software 1992-2023</title>"
 	xdata = xdata + "  <link REL='StyleSheet' TYPE='text/css' HREF='static/css/style.css'>"
 	//------------------------------------------------------------------------
 	xdata = xdata + "</head>"
 	//------------------------------------------------------------------------
-	xdata = xdata + "<body>"
-	xdata = xdata + "<H1>Go Web Server.</H1>"
+	xdata = xdata + "<body onload='startTime()'>"
+	xdata = xdata + "<H1>EDI Tool</H1>"
 	//---------
 	host, _ := os.Hostname()
 	addrs, _ := net.LookupIP(host)
@@ -110,17 +110,16 @@ func InitPage() string {
 		}
 	}
 	xip = "localhost"
+	xdata = xdata + "<div id='txtdt'></div>"
+	xdata = DateTimeDisplay(xdata)
 	xdata = xdata + "<p> Host Port IP : " + xip
 	xdata = xdata + "<BR> Machine IP : " + xxip + "</p>"
 	xdata = xdata + "  <A HREF='http://" + xip + ":8080/about'> [ About ] </A>  "
 	xdata = xdata + "  <A HREF='http://" + xip + ":8080/playground'> [ PlayGround ] </A>  "
 	xdata = xdata + "  <A HREF='http://" + xip + ":8080/display'> [ Display ] </A>  "
 	xdata = xdata + "  <A HREF='http://" + xip + ":8080/test'> [ Testing ] </A>  "
-	xdata = xdata + "  <BR>  Static :"
-	xdata = xdata + "  <A HREF='http://" + xip + ":8080/static/test123.html'> [ Test123 ] </A>  "
-	xdata = xdata + "  <A HREF='http://" + xip + ":8080/static/index.html'> [ Index ] </A>  "
-	xdata = xdata + "  <A HREF='http://" + xip + ":8080/static/testdev.html'> [ TestDev ] </A>  "
-	xdata = xdata + "<BR><BR>Go Web Server...."
+	xdata = xdata + "  <A HREF='http://" + xip + ":8080/static/index.html'> [ Documentation ] </A>  "
+	xdata = xdata + "<BR><BR><small>EDI Tool -  (c) Copyright Com1Software 1992-2023</small>"
 	//------------------------------------------------------------------------
 	xdata = xdata + " </body>"
 	xdata = xdata + " </html>"
@@ -137,7 +136,6 @@ func AboutPage() string {
 	xdata = xdata + "<head>"
 	//------------------------------------------------------------------------
 	xdata = xdata + "<title>About Page</title>"
-	xdata = xdata + "  <link REL='StyleSheet' TYPE='text/css' HREF='static/css/style.css'>"
 	//------------------------------------------------------------------------
 	xdata = DateTimeDisplay(xdata)
 	xdata = xdata + "<style>"
@@ -161,7 +159,7 @@ func AboutPage() string {
 	//---------
 	xdata = xdata + "  <A HREF='https://github.com/Com1Software/Test-GoWebServer'> [ GoWebServer GitHub Repository ] </A>  "
 	xdata = xdata + "<BR>"
-	xdata = xdata + "Go Web Server"
+	xdata = xdata + "<small>EDI Tool -  (c) Copyright Com1Software 1992-2023</small>"
 	//------------------------------------------------------------------------
 
 	//------------------------------------------------------------------------
