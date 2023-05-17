@@ -12,7 +12,10 @@ import (
 
 //----------------------------------------------------------------
 func main() {
-	fmt.Println("Go Web Server")
+	fmt.Printf("EDI Tool - (c) Copyright Com1Software 1992-2023\n")
+	fmt.Printf("Repository : github.com/Com1Software/EDI-Tool\n")
+	fmt.Printf("Operating System : %s\n", runtime.GOOS)
+
 	switch {
 	//-------------------------------------------------------------
 	case len(os.Args) == 2:
