@@ -1,6 +1,11 @@
 package main
 
 import (
+	"encoding/json"
+	"flag"
+	"io"
+	"io/ioutil"
+	"log"
 	"net"
 	"net/http"
 	"os/exec"
@@ -9,26 +14,54 @@ import (
 	"fmt"
 	"os"
 )
-type CommandControl struct {
-	Status     string
-	ReturnCode string
-	Command    string
+
+var configFile *string = flag.String("config", "config", "Config File")
+var config map[string]string = make(map[string]string)
+
+type ConfigSettings struct {
+	xip               string
+	workfolder        string
+	sourcefolder      string
+	destinationfolder string
+	mapfolder         string
+	schemafolder      string
+	exefile           string
 }
 
 //----------------------------------------------------------------
 func main() {
-	xip := "localhost"
-	//	workfolder := "/qa"
-	//	sourcefolder := "/sourcefiles"
-	//	destinationfolder := "/destinationfiles"
-	//	mapfolder := "/mapfiles"
-	//	schemafolder := "/schemafiles"
-	//	exefile := "/C1D0U484/C1D0U484.EXE"
-
+	flag.Parse()
+	cfgset := &ConfigSettings{}
+	cfgset.xip = "localhost"
+	cfgset.workfolder = "/qa"
+	cfgset.sourcefolder = "/sourcefiles"
+	cfgset.destinationfolder = "/destinationfiles"
+	cfgset.mapfolder = "/mapfiles"
+	cfgset.schemafolder = "/schemafiles"
+	cfgset.exefile = "/C1D0U484/C1D0U484.EXE"
+	//------------------------------------------------------------
 	fmt.Printf("EDI Tool - (c) Copyright Com1Software 1992-2023\n")
 	fmt.Printf("Repository : github.com/Com1Software/EDI-Tool\n")
 	fmt.Printf("Operating System : %s\n", runtime.GOOS)
-
+	//--------------------------------------------------------- Read Config
+	cfgFile, errRF := ioutil.ReadFile(*configFile)
+	if errRF != nil {
+		fmt.Printf("Error Reading Config %s\n", errRF)
+	}
+	//--------------------------------------------------------- Unmarshal Config
+	errUM := json.Unmarshal(cfgFile, &config)
+	if errUM != nil {
+		fmt.Printf("Error UnMarshalling Config %s\n", errRF)
+	}
+	//--------------------------------------------------------- Start Logging
+	logFile, errLF := os.OpenFile(config["logfile"], os.O_RDWR|os.O_CREATE|os.O_APPEND, 0660)
+	if errLF != nil {
+		fmt.Printf("Error Reading Config %s\n", errRF)
+	}
+	defer logFile.Close()
+	log.SetOutput(io.MultiWriter(logFile, os.Stdout))
+	log.Printf("Logging Started")
+	//---------------------------------------------------------
 	switch {
 	//-------------------------------------------------------------
 	case len(os.Args) == 2:
@@ -40,28 +73,29 @@ func main() {
 		fmt.Println("Server running....")
 		fmt.Println("Listening on port 8080")
 		fmt.Println("")
+		//------------------------------------------------ Projects Page Handler
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			xdata := InitPage(xip)
+			xdata := InitPage(*cfgset)
 			fmt.Fprint(w, xdata)
 		})
 		//------------------------------------------------ About Page Handler
 		http.HandleFunc("/about", func(w http.ResponseWriter, r *http.Request) {
-			xdata := AboutPage(xip)
+			xdata := AboutPage(*cfgset)
 			fmt.Fprint(w, xdata)
 		})
 		//------------------------------------------------ Settings Page Handler
 		http.HandleFunc("/settings", func(w http.ResponseWriter, r *http.Request) {
-			xdata := SettingsPage(xip)
+			xdata := SettingsPage(*cfgset)
 			fmt.Fprint(w, xdata)
 		})
 		//------------------------------------------------ Projects Page Handler
 		http.HandleFunc("/projects", func(w http.ResponseWriter, r *http.Request) {
-			xdata := ProjectsPage(xip)
+			xdata := ProjectsPage(*cfgset)
 			fmt.Fprint(w, xdata)
 		})
 		//------------------------------------------------ Examples Page Handler
 		http.HandleFunc("/examples", func(w http.ResponseWriter, r *http.Request) {
-			xdata := ExamplesPage(xip)
+			xdata := ExamplesPage(*cfgset)
 			fmt.Fprint(w, xdata)
 		})
 		//------------------------------------------------- Static Handler Handler
@@ -97,7 +131,8 @@ func Openbrowser(url string) error {
 }
 
 //----------------------------------------------------- Init Page
-func InitPage(xip string) string {
+func InitPage(cfgset ConfigSettings) string {
+	xip := cfgset.xip
 	xxip := ""
 	xdata := "<!DOCTYPE html>"
 	xdata = xdata + "<html>"
@@ -129,7 +164,8 @@ func InitPage(xip string) string {
 }
 
 //--------------------------------- Settings
-func SettingsPage(xip string) string {
+func SettingsPage(cfgset ConfigSettings) string {
+	xip := cfgset.xip
 	xdata := "<!DOCTYPE html>"
 	xdata = xdata + "<html>"
 	xdata = xdata + "<head>"
@@ -149,7 +185,8 @@ func SettingsPage(xip string) string {
 }
 
 //--------------------------------- Examples
-func ExamplesPage(xip string) string {
+func ExamplesPage(cfgset ConfigSettings) string {
+	xip := cfgset.xip
 	xdata := "<!DOCTYPE html>"
 	xdata = xdata + "<html>"
 	xdata = xdata + "<head>"
@@ -169,7 +206,8 @@ func ExamplesPage(xip string) string {
 }
 
 //--------------------------------- Projects
-func ProjectsPage(xip string) string {
+func ProjectsPage(cfgset ConfigSettings) string {
+	xip := cfgset.xip
 	xdata := "<!DOCTYPE html>"
 	xdata = xdata + "<html>"
 	xdata = xdata + "<head>"
@@ -189,7 +227,8 @@ func ProjectsPage(xip string) string {
 }
 
 //--------------------------------- About
-func AboutPage(xip string) string {
+func AboutPage(cfgset ConfigSettings) string {
+	xip := cfgset.xip
 	xdata := "<!DOCTYPE html>"
 	xdata = xdata + "<html>"
 	xdata = xdata + "<head>"
