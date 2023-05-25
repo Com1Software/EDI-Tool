@@ -1,5 +1,4 @@
-# EDI-Tool
-EDI Tool
+# EDI Tool
 
 http://support.com1software.com/ 
 <BR>Com1 Software Support
